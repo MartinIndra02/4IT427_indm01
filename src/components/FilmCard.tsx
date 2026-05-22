@@ -1,10 +1,13 @@
 import type { Film } from '../types/film.types';
 
-export interface FilmCardProps extends Film {
-  onToggleWatched: (title: string) => void;
+export interface FilmCardProps {
+  film: Film;
+  onToggleWatched: (id: string) => void;
+  onRemove: (id: string) => void;
 }
 
-function FilmCard({ title, year, genre, rating, watched, onToggleWatched }: FilmCardProps) {
+function FilmCard({ film, onToggleWatched, onRemove }: FilmCardProps) {
+  const { id, title, year, genre, rating, watched } = film;
   const isRatingValid = rating >= 1 && rating <= 10;
 
   return (
@@ -14,8 +17,11 @@ function FilmCard({ title, year, genre, rating, watched, onToggleWatched }: Film
       <p>Žánr: {genre}</p>
       <p>Hodnocení: {isRatingValid ? `${rating}/10` : 'Neplatné hodnocení'}</p>
       {watched && <p>✓ Zhlédnuto</p>}
-      <button type="button" onClick={() => onToggleWatched(title)}>
+      <button type="button" onClick={() => onToggleWatched(id)}>
         Změnit stav zhlédnutí
+      </button>
+      <button type="button" onClick={() => onRemove(id)}>
+        Odebrat
       </button>
     </article>
   );

@@ -1,53 +1,36 @@
 import { useEffect } from 'react';
 import FilmCard from './components/FilmCard';
-import type { Film } from './types/film.types';
-import { useWatchlist } from './hooks/useWatchlist';
-
-const initialFilms: Film[] = [
-  {
-    id: '1',
-    title: 'Inception',
-    year: 2010,
-    genre: 'Sci-fi',
-    rating: 9,
-    watched: true,
-  },
-  {
-    id: '2',
-    title: 'The Grand Budapest Hotel',
-    year: 2014,
-    genre: 'Komedie',
-    rating: 8,
-    watched: false,
-  },
-  {
-    id: '3',
-    title: 'Interstellar',
-    year: 2014,
-    genre: 'Sci-fi',
-    rating: 11,
-    watched: true,
-  },
-];
+import AddFilmForm from './components/AddFilmForm';
+import { useWatchlist } from './context/WatchlistContext';
 
 function App() {
-  const { films, toggleWatched, markAllAsWatched } = useWatchlist(initialFilms);
+  const { films, toggleWatched, removeFilm, markAllAsWatched } = useWatchlist();
+
+  const watchedCount = films.filter((film) => film.watched).length;
+  const totalCount = films.length;
 
   useEffect(() => {
-    const watchedCount = films.filter((film) => film.watched).length;
-    const totalCount = films.length;
     document.title = `Watchlist (${watchedCount} / ${totalCount} zhlédnuto)`;
-  }, [films]);
+  }, [watchedCount, totalCount]);
 
   return (
     <main>
       <section>
         <h1>Filmy</h1>
+        <h2>
+          {watchedCount} / {totalCount} zhlédnuto
+        </h2>
+        <AddFilmForm />
         <button type="button" onClick={markAllAsWatched}>
           Označit vše jako zhlédnuté
         </button>
         {films.map((film) => (
-          <FilmCard key={film.id} {...film} onToggleWatched={toggleWatched} />
+          <FilmCard
+            key={film.id}
+            film={film}
+            onToggleWatched={toggleWatched}
+            onRemove={removeFilm}
+          />
         ))}
       </section>
     </main>
