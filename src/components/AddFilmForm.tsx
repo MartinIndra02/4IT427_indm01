@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useWatchlist } from '../context/WatchlistContext';
 
 function AddFilmForm() {
   const { addFilm } = useWatchlist();
+  const navigate = useNavigate();
 
   const [title, setTitle] = useState('');
   const [year, setYear] = useState('');
@@ -31,6 +33,7 @@ function AddFilmForm() {
     setYear('');
     setGenre('');
     setRating('');
+    navigate('/');
   };
 
   return (
