@@ -3,7 +3,7 @@ import { useWatchlist } from '../context/WatchlistContext';
 import FilmCard from '../components/FilmCard';
 
 export default function WatchlistPage() {
-  const { films, toggleWatched, removeFilm, markAllAsWatched } = useWatchlist();
+  const { films, toggleWatched, removeFilm, markAllAsWatched, isLoading, isError, refetch } = useWatchlist();
 
   const watchedCount = films.filter((film) => film.watched).length;
   const totalCount = films.length;
@@ -11,6 +11,45 @@ export default function WatchlistPage() {
   useEffect(() => {
     document.title = `Watchlist (${watchedCount} / ${totalCount} zhlédnuto)`;
   }, [watchedCount, totalCount]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8 glass-panel rounded-3xl border border-white/40 dark:border-white/5 shadow-xl">
+        <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-lg font-bold text-slate-500 dark:text-slate-400 animate-pulse">
+          Načítám filmy...
+        </p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8 glass-panel rounded-3xl border border-rose-500/20 dark:border-rose-500/10 bg-rose-500/5 dark:bg-rose-500/[0.02] shadow-xl">
+        <div className="p-4 bg-rose-100 dark:bg-rose-950/40 rounded-full w-16 h-16 flex items-center justify-center mb-5 shadow-sm">
+          <svg className="w-8 h-8 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h3 className="text-xl font-extrabold text-rose-700 dark:text-rose-400 mb-2">
+          Nepodařilo se načíst filmy
+        </h3>
+        <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mb-6">
+          Došlo k chybě při stahování dat z filmového archivu. Zkontrolujte připojení nebo akci opakujte.
+        </p>
+        <button
+          type="button"
+          onClick={refetch}
+          className="inline-flex items-center justify-center bg-rose-600 hover:bg-rose-500 text-white font-bold px-6 py-3 rounded-2xl text-sm transition-all duration-300 cursor-pointer shadow-lg hover:shadow-rose-500/25 active:scale-95 outline-none focus:ring-2 focus:ring-rose-500"
+        >
+          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.706 8.5" />
+          </svg>
+          Zkusit znovu
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
